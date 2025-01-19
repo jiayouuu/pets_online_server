@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>com.jiayou</groupId>
 	<artifactId>pets_online_server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>pets_online_server</name>
-	<description>Demo project for Spring Boot</description>
+	<description>pets_online</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<scope>annotationProcessor</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>

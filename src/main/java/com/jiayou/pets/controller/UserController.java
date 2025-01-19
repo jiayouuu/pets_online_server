@@ -2,7 +2,7 @@
  * @Author: 桂佳囿
  * @Date: 2025-01-18 15:35:06
  * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-19 14:32:55
+ * @LastEditTime: 2025-01-19 17:54:06
  * @Description: 用户相关控制器
  */
 package com.jiayou.pets.controller;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/user")
