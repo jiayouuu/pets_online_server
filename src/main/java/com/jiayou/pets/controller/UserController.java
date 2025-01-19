@@ -2,7 +2,7 @@
  * @Author: 桂佳囿
  * @Date: 2025-01-18 15:35:06
  * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-18 20:35:58
+ * @LastEditTime: 2025-01-19 14:32:55
  * @Description: 用户相关控制器
  */
 package com.jiayou.pets.controller;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<User> add(@ModelAttribute User user) {
         try {
             User savedUser = userService.add(user);
