@@ -2,7 +2,7 @@
  * @Author: 桂佳囿
  * @Date: 2025-01-18 21:19:12
  * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-19 14:07:37
+ * @LastEditTime: 2025-01-22 09:59:10
  * @Description: 前端页面资源控制器
  */
 package com.jiayou.pets.controller;
@@ -24,9 +24,9 @@ public class FrontendController {
     public String forwardToFrontend() {
         return "forward:/index.html";
     }
-
+    // 将pets 请求重定向到 pets/app
     @GetMapping("/")
     public RedirectView redirect() {
-        return new RedirectView(String.format("%sapp/", contextPath));
+        return new RedirectView(String.format("%s/app/", contextPath));
     }
 }

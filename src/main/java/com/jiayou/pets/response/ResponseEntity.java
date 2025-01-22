@@ -29,7 +29,7 @@ public class ResponseEntity<T> {
 
     // 静态方法用于快速创建成功响应
     public static <T> ResponseEntity<T> success(T data) {
-        return new ResponseEntity<>(200, "Success", data);
+        return new ResponseEntity<>(200, "success", data);
     }
 
     // 静态方法用于快速创建失败响应
