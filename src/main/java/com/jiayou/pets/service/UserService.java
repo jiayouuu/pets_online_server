@@ -10,6 +10,6 @@ package com.jiayou.pets.service;
 import com.jiayou.pets.pojo.User;
 
 public interface UserService {
-    User add(User user) throws Exception;
+    Integer add(User user) throws Exception;
 
 }

@@ -2,7 +2,7 @@
  * @Author: 桂佳囿
  * @Date: 2025-01-18 15:35:06
  * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-19 17:54:06
+ * @LastEditTime: 2025-01-22 17:56:06
  * @Description: 用户相关控制器
  */
 package com.jiayou.pets.controller;
@@ -24,11 +24,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/add")
-    public ResponseEntity<User> add(@ModelAttribute User user) {
+    @PostMapping("/register")
+    public  ResponseEntity<Integer> register(@ModelAttribute User user) {
         try {
-            User savedUser = userService.add(user);
-            return ResponseEntity.success(savedUser);
+            int addCount = userService.add(user);
+            return ResponseEntity.success(addCount);
         } catch (Exception e) {
             return ResponseEntity.error(500, e.getMessage());
         }

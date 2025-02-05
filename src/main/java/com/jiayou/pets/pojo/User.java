@@ -2,7 +2,7 @@
  * @Author: 桂佳囿
  * @Date: 2025-01-18 15:47:05
  * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-22 09:51:46
+ * @LastEditTime: 2025-01-22 17:45:02
  * @Description: 用户
  */
 package com.jiayou.pets.pojo;
@@ -30,5 +30,7 @@ public class User {
     // mybatis-plus 主键策略
     @TableId(type = IdType.ASSIGN_UUID)
     private String userId;
+    private String email;
+    private String password;
     private String nickname;
 }
