@@ -1,10 +1,3 @@
-/*
- * @Author: 桂佳囿
- * @Date: 2025-01-18 17:53:47
- * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-18 20:34:23
- * @Description: 跨域配置
- */
 package com.jiayou.pets.config;
 
 import org.springframework.context.annotation.Configuration;

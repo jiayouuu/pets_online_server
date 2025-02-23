@@ -1,15 +1,11 @@
-/*
- * @Author: 桂佳囿
- * @Date: 2025-01-18 16:23:11
- * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-18 19:54:39
- * @Description: 用户相关接口
- */
 package com.jiayou.pets.service;
 
 import com.jiayou.pets.pojo.User;
 
 public interface UserService {
-    Integer add(User user) throws Exception;
+    // 用户注册方法
+    Integer register(User user, String verificationCode);
 
+    // 用户登录方法
+    boolean login(User user);
 }

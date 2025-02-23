@@ -1,10 +1,3 @@
-/*
- * @Author: 桂佳囿
- * @Date: 2025-01-18 15:47:05
- * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-22 17:45:02
- * @Description: 用户
- */
 package com.jiayou.pets.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -18,7 +11,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 
 @Data
-// jpa 实体
+// jpa 实体 用于自动生成表
 @Entity
 // mybatis-plus 实体
 @TableName("user")
@@ -33,4 +26,10 @@ public class User {
     private String email;
     private String password;
     private String nickname;
+    private String avatar;
+    private String phone;
+    private String address;
+    private String gender;
+    private String birthDate;
+    private String role;
 }

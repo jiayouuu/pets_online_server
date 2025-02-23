@@ -1,11 +1,3 @@
-/*
- * @Author: 桂佳囿
- * @Date: 2025-01-18 18:07:47
- * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-18 20:38:28
- * @Description: 响应体
- */
-
 package com.jiayou.pets.response;
 
 import lombok.Data;

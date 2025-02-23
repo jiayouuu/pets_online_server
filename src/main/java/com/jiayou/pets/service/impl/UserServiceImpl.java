@@ -1,35 +1,52 @@
-/*
- * @Author: 桂佳囿
- * @Date: 2025-01-18 16:25:42
- * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-22 17:49:22
- * @Description: 用户相关接口实现
- */
 package com.jiayou.pets.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.jiayou.pets.dao.UserMapper;
 import com.jiayou.pets.pojo.User;
 import com.jiayou.pets.service.UserService;
 import com.jiayou.pets.utils.Encrypt;
+import com.jiayou.pets.dao.UserMapper;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserMapper userMapper;
 
+    private  final UserMapper userMapper;
+    private final ValidateServiceImpl emailService;
+    public  UserServiceImpl(UserMapper userMapper, ValidateServiceImpl emailService) {
+        this.userMapper = userMapper;
+        this.emailService = emailService;
+    }
     @Override
-    public Integer add(User user) throws Exception {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("email", user.getEmail());
-        User existUser = userMapper.selectOne(queryWrapper);
-        if (existUser != null)
-            throw new Exception("邮箱已经注册账号，请直接登录");
+    public Integer register(User user, String verificationCode) {
+        // 检查用户是否已存在
+        User existingUser = userMapper.findByEmail(user.getEmail());
+        if (existingUser != null) {
+            throw new RuntimeException("邮箱已经注册，请登录");
+        }
+        // 验证验证码
+        if(!emailService.validateCode(user.getEmail(), verificationCode)){
+            throw new RuntimeException("验证码错误");
+        }
+        // 密码加密
         user.setPassword(Encrypt.hashPassword(user.getPassword()));
-        return userMapper.insert(user);
-
+        // 保存新用户
+        Integer count = userMapper.insert(user);
+        if (count == 0) {
+            throw new RuntimeException("注册失败");
+        }
+        return count;
     }
 
+    @Override
+    public boolean login(User user) {
+        User existingUser = userMapper.findByEmail(user.getEmail());
+        if (existingUser == null) {
+            throw new RuntimeException("邮箱未注册");
+        }
+        if (!Encrypt.checkPassword(user.getPassword(), existingUser.getPassword())) {
+            throw new RuntimeException("密码错误");
+        }
+        return true;
+    }
 }

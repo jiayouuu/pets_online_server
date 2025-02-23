@@ -1,10 +1,3 @@
-/*
- * @Author: 桂佳囿
- * @Date: 2025-01-22 17:22:16
- * @LastEditors: 桂佳囿
- * @LastEditTime: 2025-01-22 17:48:27
- * @Description: 
- */
 package com.jiayou.pets.utils;
 
 import org.mindrot.jbcrypt.BCrypt;

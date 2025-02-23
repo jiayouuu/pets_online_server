@@ -12,6 +12,30 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL8Dialect # 配置数据库方言
+    mail:
+        host: smtp.qq.com
+        username: jiayouuu@foxmail.com
+        password: gtuixzhdoxbvdabi
+        port: 465
+        properties:
+            mail:
+                smtp:
+                    socketFactory: 
+                        class: javax.net.ssl.SSLSocketFactory
+        default-encoding: UTF-8
+        
+    data:
+     redis:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      password: 
+      lettuce:
+        pool:
+          max-active: 20
+          max-wait: 1ms
+          max-idle: 10
+          min-idle: 0
 mybatis-plus:
     configuration:
         map-underscore-to-camel-case: true # 驼峰命名
@@ -19,3 +43,9 @@ server:
   port: 9000
   servlet:
     context-path: /pets
+jwt:
+    secret: pets_online_by_jiayou
+    timeout-day: 7
+logging:
+  level:
+    org.springframework.security: DEBUG
