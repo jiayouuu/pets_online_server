@@ -2,7 +2,6 @@ package com.jiayou.pets.service.impl;
 
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -14,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.jiayou.pets.response.ResponseEntity;
 import com.jiayou.pets.service.ValidateService;
 import com.jiayou.pets.utils.EmailUtil;
 import com.jiayou.pets.utils.RedisUtil;
@@ -70,7 +70,7 @@ public class ValidateServiceImpl implements ValidateService {
     }
 
     @Override
-    public Map<String, String> sendImgCode() {
+    public ResponseEntity<HashMap<String,Object>> sendImgCode() {
         // 生成验证码
         String code = generateStringCode(5);
         // 创建验证码图片
@@ -79,7 +79,7 @@ public class ValidateServiceImpl implements ValidateService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         // 生成一个 UUID
         String tempId = UUID.randomUUID().toString();
-        HashMap<String, String> map = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
         try {
             ImageIO.write(image, "png", baos);
             String base64Image = Base64.getEncoder().encodeToString(baos.toByteArray());
@@ -87,10 +87,10 @@ public class ValidateServiceImpl implements ValidateService {
             redisUtil.setWithExpire(tempId, code, 30, java.util.concurrent.TimeUnit.MINUTES);
             map.put("id", tempId);
             map.put("img", imgData);
+            return ResponseEntity.success(map);
         } catch (Exception e) { 
-            map.put("info", e.getMessage());
+            return ResponseEntity.error(400, e.getMessage());
         }
-        return map;
     }
 
 }

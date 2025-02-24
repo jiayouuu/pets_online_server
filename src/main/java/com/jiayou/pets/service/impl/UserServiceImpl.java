@@ -4,8 +4,6 @@ import com.jiayou.pets.pojo.User;
 import com.jiayou.pets.service.UserService;
 import com.jiayou.pets.utils.Encrypt;
 import com.jiayou.pets.dao.UserMapper;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

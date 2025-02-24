@@ -1,11 +1,10 @@
 package com.jiayou.pets.service;
 
-import java.util.Map;
-
+import java.util.HashMap;
+import com.jiayou.pets.response.ResponseEntity;
 public interface ValidateService {
     boolean sendEmailCode(String email);
-
-    Map<String, String> sendImgCode();
+    ResponseEntity<HashMap<String,Object>> sendImgCode();
 
     boolean validateCode(String key, String code);
 }
