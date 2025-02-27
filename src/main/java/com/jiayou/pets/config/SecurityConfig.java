@@ -28,9 +28,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 适配 context-path /pets
+                        // 浏览器预检请求
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll()
+                        // .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll()
+                        .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/index.html").permitAll()
                         .requestMatchers("/").permitAll()

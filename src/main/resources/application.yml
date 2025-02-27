@@ -44,8 +44,7 @@ server:
   servlet:
     context-path: /pets
 jwt:
-    secret: pets_online_by_jiayou
-    timeout-day: 7
-logging:
-  level:
-    org.springframework.security: DEBUG
+    secret: cGV0c19vbmxpbmVfYnlfamlheW91PSpLj5wuXXofO56MDWpPK35cHZmj9ui0wtfw5am4w-TR96K2
+# logging:
+#   level:
+    # org.springframework.security: DEBUG

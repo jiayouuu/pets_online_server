@@ -1,50 +1,76 @@
 package com.jiayou.pets.service.impl;
 
 import com.jiayou.pets.pojo.User;
+import com.jiayou.pets.response.ResponseEntity;
 import com.jiayou.pets.service.UserService;
 import com.jiayou.pets.utils.Encrypt;
+import com.jiayou.pets.utils.JwtUtil;
 import com.jiayou.pets.dao.UserMapper;
+import com.jiayou.pets.dto.user.LoginRequest;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private final JwtUtil jwtUtil;
+    private final UserMapper userMapper;
 
-    private  final UserMapper userMapper;
-    private final ValidateServiceImpl emailService;
-    public  UserServiceImpl(UserMapper userMapper, ValidateServiceImpl emailService) {
+    public UserServiceImpl(UserMapper userMapper,JwtUtil jwtUtil) {
         this.userMapper = userMapper;
-        this.emailService = emailService;
+        this.jwtUtil = jwtUtil;
     }
+
     @Override
-    public Integer register(User user, String verificationCode) {
+    public ResponseEntity<HashMap<String, Object>> register(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String tokenEmail = authentication.getName();
+        if (!tokenEmail.equals(user.getEmail())) {
+            return ResponseEntity.error(400, "邮箱不匹配,请重试");
+        }
+        System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee" + user.getEmail());
+        HashMap<String, Object> map = new HashMap<>();
         // 检查用户是否已存在
         User existingUser = userMapper.findByEmail(user.getEmail());
         if (existingUser != null) {
-            throw new RuntimeException("邮箱已经注册，请登录");
-        }
-        // 验证验证码
-        if(!emailService.validateCode(user.getEmail(), verificationCode)){
-            throw new RuntimeException("验证码错误");
+            return ResponseEntity.error(400, "邮箱已经注册，请登录");
         }
         // 密码加密
         user.setPassword(Encrypt.hashPassword(user.getPassword()));
         // 保存新用户
-        Integer count = userMapper.insert(user);
-        if (count == 0) {
-            throw new RuntimeException("注册失败");
+        if (0 == userMapper.insert(user)) {
+            return ResponseEntity.error(400, "注册失败");
         }
-        return count;
+        return ResponseEntity.success(map);
     }
 
     @Override
-    public boolean login(User user) {
-        User existingUser = userMapper.findByEmail(user.getEmail());
-        if (existingUser == null) {
-            throw new RuntimeException("邮箱未注册");
+    public ResponseEntity<HashMap<String, Object>> login(LoginRequest request) {
+        HashMap<String, Object> map = new HashMap<>();
+        User existUser = userMapper.findByEmail(request.getEmail());
+        if (existUser == null) {
+            return ResponseEntity.error(400, "邮箱未注册");
         }
-        if (!Encrypt.checkPassword(user.getPassword(), existingUser.getPassword())) {
-            throw new RuntimeException("密码错误");
+        if (!Encrypt.checkPassword(request.getPassword(), existUser.getPassword())) {
+            return ResponseEntity.error(400, "密码错误");
         }
-        return true;
+        String token;
+        if (request.isRemember()) {
+            token = jwtUtil.generateToken(new HashMap<>(){{
+                put("email", request.getEmail());
+                put("userId",existUser.getUserId());
+            }}, 7, TimeUnit.DAYS);
+        } else {
+            token = jwtUtil.generateToken(new HashMap<>(){{
+                put("email", request.getEmail());
+                put("userId",existUser.getUserId());
+            }}, 6, TimeUnit.HOURS);
+        }
+        map.put("token",token);
+        return ResponseEntity.success(map);
     }
 }

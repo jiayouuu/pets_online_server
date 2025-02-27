@@ -4,7 +4,6 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.Properties;
 
 @Configuration
@@ -20,7 +19,7 @@ public class KaptchaConfig {
         properties.setProperty("kaptcha.textproducer.char.string", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         // 图片宽度和高度
         properties.setProperty("kaptcha.image.width", "120");
-        properties.setProperty("kaptcha.image.height", "40");
+        properties.setProperty("kaptcha.image.height", "50");
         // 字体大小
         properties.setProperty("kaptcha.textproducer.font.size", "30");
         // 字体颜色

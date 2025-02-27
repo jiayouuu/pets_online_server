@@ -2,12 +2,14 @@ package com.jiayou.pets.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jiayou.pets.dto.user.LoginRequest;
 import com.jiayou.pets.pojo.User;
 import com.jiayou.pets.response.ResponseEntity;
 import com.jiayou.pets.service.UserService;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import java.util.HashMap;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,20 +21,20 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Integer> register(@ModelAttribute User user, String code) {
+    public ResponseEntity<HashMap<String, Object>> register(@RequestBody User user) {
         try {
-            return ResponseEntity.success(userService.register(user, code));
+            return userService.register(user);
         } catch (Exception e) {
-            return ResponseEntity.error(400, e.getMessage());
+            return ResponseEntity.error(500, e.getMessage());
         }
     }
+
     @PostMapping("/login")
-    public ResponseEntity<Integer> postMethodName(@ModelAttribute User user) {
+    public ResponseEntity<HashMap<String, Object>> postMethodName(@RequestBody LoginRequest request) {
         try {
-            userService.login(user);
-            return ResponseEntity.success(1);
+            return userService.login(request);
         } catch (Exception e) {
-            return ResponseEntity.error(400, e.getMessage());
+            return ResponseEntity.error(500, e.getMessage());
         }
     }
 }

@@ -4,7 +4,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jiayou.pets.response.ResponseEntity;
 import com.jiayou.pets.service.impl.ValidateServiceImpl;
-
 import java.util.HashMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,34 +21,42 @@ public class PublicController {
     }
 
     @GetMapping("/email/code")
-    public ResponseEntity<String> sendCode(@RequestParam String email) {
+    public ResponseEntity<HashMap<String, Object>> sendCode(@RequestParam String email) {
         try {
-            boolean flag = validateServiceImpl.sendEmailCode(email);
-            return flag ? ResponseEntity.success(null) : ResponseEntity.error(400, "发送失败");
+            return validateServiceImpl.sendEmailCode(email);
         } catch (Exception e) {
-            return ResponseEntity.error(400, e.getMessage());
+            return ResponseEntity.error(500, e.getMessage());
         }
     }
 
     @GetMapping("/imgCode")
-    public ResponseEntity<HashMap<String,Object>> sendImgCode() {
+    public ResponseEntity<HashMap<String, Object>> sendImgCode() {
         try {
             return validateServiceImpl.sendImgCode();
         } catch (Exception e) {
-            return ResponseEntity.error(400, e.getMessage());
+            return ResponseEntity.error(500, e.getMessage());
         }
     }
 
     @PostMapping("/validateImgCode")
-    public ResponseEntity<String> validateImgCode(@RequestBody  HashMap<String,Object> map) {
+    public ResponseEntity<HashMap<String, Object>> validateImgCode(@RequestBody HashMap<String, Object> map) {
         try {
             String id = (String) map.get("id");
             String code = (String) map.get("code");
-            boolean flag = validateServiceImpl.validateCode(id, code);
-            return ResponseEntity.success(flag ? "1" : "0");
+            return validateServiceImpl.validateImgCode(id, code);
         } catch (Exception e) {
-            return ResponseEntity.error(400, e.getMessage());
+            return ResponseEntity.error(500, e.getMessage());
         }
     }
 
+    @PostMapping("/validateEmailCode")
+    public ResponseEntity<HashMap<String, Object>> validateEmailCode(@RequestBody HashMap<String, Object> map) {
+        try {
+            String email = (String) map.get("email");
+            String code = (String) map.get("code");
+            return validateServiceImpl.validateEmailCode(email, code);
+        } catch (Exception e) {
+            return ResponseEntity.error(500, e.getMessage());
+        }
+    }
 }

@@ -23,6 +23,10 @@ public class ResponseEntity<T> {
     public static <T> ResponseEntity<T> success(T data) {
         return new ResponseEntity<>(200, "success", data);
     }
+    // 静态方法用于快速创建成功响应
+    public static <T> ResponseEntity<T> success(T data, String message) {
+        return new ResponseEntity<>(200, message, data);
+    }
 
     // 静态方法用于快速创建失败响应
     public static <T> ResponseEntity<T> error(int code, String message) {
