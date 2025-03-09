@@ -23,7 +23,11 @@ spring:
                     socketFactory: 
                         class: javax.net.ssl.SSLSocketFactory
         default-encoding: UTF-8
-        
+    servlet:
+      multipart:
+        enabled: true
+        max-file-size: 10MB  # 单个分片最大大小，建议大于 5MB
+        max-request-size: 10MB  # 请求总大小，建议大于 5MB
     data:
      redis:
       database: 0
@@ -45,6 +49,15 @@ server:
     context-path: /pets
 jwt:
     secret: cGV0c19vbmxpbmVfYnlfamlheW91PSpLj5wuXXofO56MDWpPK35cHZmj9ui0wtfw5am4w-TR96K2
+file:
+  upload:
+    dir: C:/soft/develop/graduation_project/uploads
+    allowed-extensions:
+      - .jpg
+      - .png
+      - .pdf
+      - .mp4
+      - .txt
 # logging:
 #   level:
     # org.springframework.security: DEBUG

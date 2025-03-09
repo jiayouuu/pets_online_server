@@ -1,12 +1,12 @@
 package com.jiayou.pets.service.impl;
 
 import com.jiayou.pets.pojo.User;
-import com.jiayou.pets.response.ResponseEntity;
+import com.jiayou.pets.dto.response.ResEntity;
 import com.jiayou.pets.service.UserService;
 import com.jiayou.pets.utils.Encrypt;
 import com.jiayou.pets.utils.JwtUtil;
 import com.jiayou.pets.dao.UserMapper;
-import com.jiayou.pets.dto.user.LoginRequest;
+import com.jiayou.pets.dto.user.LoginReq;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -26,37 +26,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<HashMap<String, Object>> register(User user) {
+    public ResEntity<HashMap<String, Object>> register(User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String tokenEmail = authentication.getName();
         if (!tokenEmail.equals(user.getEmail())) {
-            return ResponseEntity.error(400, "邮箱不匹配,请重试");
+            return ResEntity.error(400, "邮箱不匹配,请重试");
         }
-        System.out.println("eeeeeeeeeeeeeeeeeeeeeeeee" + user.getEmail());
         HashMap<String, Object> map = new HashMap<>();
         // 检查用户是否已存在
         User existingUser = userMapper.findByEmail(user.getEmail());
         if (existingUser != null) {
-            return ResponseEntity.error(400, "邮箱已经注册，请登录");
+            return ResEntity.error(400, "邮箱已经注册，请登录");
         }
         // 密码加密
         user.setPassword(Encrypt.hashPassword(user.getPassword()));
         // 保存新用户
         if (0 == userMapper.insert(user)) {
-            return ResponseEntity.error(400, "注册失败");
+            return ResEntity.error(400, "注册失败");
         }
-        return ResponseEntity.success(map);
+        return ResEntity.success(map);
     }
 
     @Override
-    public ResponseEntity<HashMap<String, Object>> login(LoginRequest request) {
+    public ResEntity<HashMap<String, Object>> login(LoginReq request) {
         HashMap<String, Object> map = new HashMap<>();
         User existUser = userMapper.findByEmail(request.getEmail());
         if (existUser == null) {
-            return ResponseEntity.error(400, "邮箱未注册");
+            return ResEntity.error(400, "邮箱未注册");
         }
         if (!Encrypt.checkPassword(request.getPassword(), existUser.getPassword())) {
-            return ResponseEntity.error(400, "密码错误");
+            return ResEntity.error(400, "密码错误");
         }
         String token;
         if (request.isRemember()) {
@@ -71,6 +70,6 @@ public class UserServiceImpl implements UserService {
             }}, 6, TimeUnit.HOURS);
         }
         map.put("token",token);
-        return ResponseEntity.success(map);
+        return ResEntity.success(map);
     }
 }

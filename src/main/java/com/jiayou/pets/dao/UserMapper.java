@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
     // 根据邮箱查找用户
-    @Select("SELECT * FROM user WHERE email = #{email}")
+    @Select("SELECT * FROM users WHERE email = #{email}")
     User findByEmail(String email);
     
 }

@@ -58,11 +58,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 });
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                filterChain.doFilter(request, response);
             }
-        } else {
-            // 如果 token 无效或缺失，直接放行，交给 Spring Security 处理
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 }

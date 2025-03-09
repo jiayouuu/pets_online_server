@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
-import com.jiayou.pets.response.ResponseEntity;
+import com.jiayou.pets.dto.response.ResEntity;
 import com.jiayou.pets.service.ValidateService;
 import com.jiayou.pets.utils.EmailUtil;
 import com.jiayou.pets.utils.JwtUtil;
@@ -47,7 +47,7 @@ public class ValidateServiceImpl implements ValidateService {
     }
 
     @Override
-    public ResponseEntity<HashMap<String, Object>> sendImgCode() {
+    public ResEntity<HashMap<String, Object>> sendImgCode() {
         // 生成验证码
         String code = generateStringCode(5);
         // 创建验证码图片
@@ -64,75 +64,73 @@ public class ValidateServiceImpl implements ValidateService {
             redisUtil.setWithExpire(tempId, code, 1, java.util.concurrent.TimeUnit.HOURS);
             map.put("id", tempId);
             map.put("img", imgData);
-            return ResponseEntity.success(map);
+            return ResEntity.success(map);
         } catch (Exception e) {
-            return ResponseEntity.error(400, e.getMessage());
+            return ResEntity.error(400, e.getMessage());
         }
     }
     
 
     @Override
-    public ResponseEntity<HashMap<String, Object>> validateImgCode(String id, String code) {
+    public ResEntity<HashMap<String, Object>> validateImgCode(String id, String code) {
         HashMap<String, Object> map = new HashMap<>();
         String preCode = (String) redisUtil.get(id);
         boolean flag = preCode != null && preCode.toLowerCase().equals(code.toLowerCase());
         if (flag) {
             redisUtil.delete(id);
         } else {
-            return ResponseEntity.error(400, "验证码错误");
+            return ResEntity.error(400, "验证码错误");
         }
-        return ResponseEntity.success(map);
+        return ResEntity.success(map);
     }
 
     @Override
-    public ResponseEntity<HashMap<String, Object>> sendEmailCode(String email) {
+    public ResEntity<HashMap<String, Object>> sendEmailCode(String email) {
         HashMap<String, Object> map = new HashMap<>();
         if (email == null || email.isEmpty()) {
-            return ResponseEntity.error(400, "邮箱不能为空");
+            return ResEntity.error(400, "邮箱不能为空");
         }
         String preCode = (String) redisUtil.get(email);
         if (preCode != null) {
-            return ResponseEntity.error(400, "验证码仍处于有效期，请勿重复请求");
+            return ResEntity.error(400, "验证码仍处于有效期，请勿重复请求");
         }
         String code = generateNumberCode();
         redisUtil.setWithExpire(email, code, 1, java.util.concurrent.TimeUnit.MINUTES);
         // todo 发送验证码
-        // boolean success = emailUtil.sendSimpleEmail(email, "验证码", String.format("您的验证码为：%s，有效期1分钟，请勿泄露。", code));
-        boolean success = true;
-        System.out.println("codeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee---|"+code);
+         boolean success = emailUtil.sendSimpleEmail(email, "验证码", String.format("您的验证码为：%s，有效期1分钟，请勿泄露。", code));
         String token = jwtUtil.generateToken(new HashMap<String, Object>() {{
             put("email", email);
         }},1,TimeUnit.MINUTES);
         if (success) {
             map.put("token", token);
-            return ResponseEntity.success(map);
+            return ResEntity.success(map);
         } else {
-            return ResponseEntity.error(400, "验证码发送失败");
+            return ResEntity.error(400, "验证码发送失败");
         }
     }
     @Override
-    public ResponseEntity<HashMap<String, Object>> validateEmailCode(String email, String code) {
+    public ResEntity<HashMap<String, Object>> validateEmailCode(String email, String code) {
         HashMap<String, Object> map = new HashMap<>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String tokenEmail = authentication.getName();
         if(tokenEmail==null){
-            return ResponseEntity.error(400, "验证码已过期");
+            return ResEntity.error(400, "验证码已过期");
         }
         if(!tokenEmail.equals(email)){
-            return ResponseEntity.error(400, "邮箱不匹配,请重试");
+            return ResEntity.error(400, "邮箱不匹配,请重试");
         }
         String preCode = (String) redisUtil.get(tokenEmail);
         boolean flag = preCode != null && preCode.toLowerCase().equals(code.toLowerCase());
         if (flag) {
             redisUtil.delete(tokenEmail);
         } else {
-            return ResponseEntity.error(400, "验证码错误");
+            return ResEntity.error(400, "验证码错误");
         }
         String token = jwtUtil.generateToken(new HashMap<String, Object>() {{
             put("email", email);
         }},1,TimeUnit.MINUTES);
         map.put("token", token);
-        return ResponseEntity.success(map);
+        return ResEntity.success(map);
     }
 
    
