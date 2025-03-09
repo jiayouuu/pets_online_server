@@ -6,6 +6,7 @@ import com.jiayou.pets.dto.response.ResEntity;
 import com.jiayou.pets.service.FileService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,10 +31,12 @@ public class FileServiceImpl implements FileService {
 
     private final Map<String, Integer> chunkCountMap = new ConcurrentHashMap<>();
     private final Map<String, Long> lastUploadTimeMap = new ConcurrentHashMap<>();
-
     @Autowired
-    public FileServiceImpl(FileUploadConfig fileUploadConfig) {
+    private SimpMessagingTemplate messagingTemplate; // 注入 WebSocket 消息模板
+    @Autowired
+    public FileServiceImpl(FileUploadConfig fileUploadConfig,SimpMessagingTemplate messagingTemplate) {
         this.fileUploadConfig = fileUploadConfig;
+        this.messagingTemplate = messagingTemplate;
     }
     @Override
     public ResEntity<HashMap<String, Object>> upload(FileUploadReq req) {
@@ -65,13 +68,16 @@ public class FileServiceImpl implements FileService {
             chunk.transferTo(chunkPath.toFile());
 
             // 更新分片计数和最后上传时间
-            int currentCount = chunkCountMap.getOrDefault(fileId, 0) + 1;
-            chunkCountMap.put(fileId, currentCount);
+            // 使用 compute 原子更新 chunkCountMap
+            int currentCount = chunkCountMap.compute(fileId, (key, oldValue) ->
+                    oldValue == null ? 1 : oldValue + 1);
             lastUploadTimeMap.put(fileId, System.currentTimeMillis());
+            // 计算并通过 WebSocket 发送上传进度
+            int progress = (int) Math.round((currentCount / (double) totalChunks) * 100);
+            messagingTemplate.convertAndSend("/topic/upload-progress/" + fileId, progress);
             if (currentCount > totalChunks) {
                 return ResEntity.error(400, "分片数量异常");
             }
-            System.out.println("当前分片数量: " + currentCount);
             // 检查是否所有分片都已上传
             if (currentCount == totalChunks) {
                 for (int i = 0; i < totalChunks; i++) {
@@ -85,10 +91,12 @@ public class FileServiceImpl implements FileService {
                 cleanup(fileId, totalChunks);
                 chunkCountMap.remove(fileId);
                 lastUploadTimeMap.remove(fileId);
-                return isMerged? ResEntity.success(new HashMap<>(){{
-                    put("fileName", finalFileName);
-                }})
-                        : ResEntity.error(500, "分片校验或合并失败");
+                if (isMerged) {
+                    // 通过 WebSocket 发送最终文件名
+                    messagingTemplate.convertAndSend("/topic/upload-complete/" + fileId, finalFileName);
+                } else {
+                    return ResEntity.error(500, "分片校验或合并失败");
+                }
             }
             return ResEntity.success(new HashMap<>(), "分片 " + chunkIndex + " 上传成功");
         } catch (IOException e) {
@@ -190,12 +198,10 @@ public class FileServiceImpl implements FileService {
                     if (chunks != null) {
                         for (File chunk : chunks) {
                             chunk.delete();
-                            System.out.println("删除超时分片文件: " + chunk.getName());
                         }
                     }
                     chunkCountMap.remove(fileId);
                     lastUploadTimeMap.remove(fileId);
-                    System.out.println("清理超时文件: " + fileId);
                 } catch (Exception e) {
                     System.err.println("清理超时文件失败: " + e.getMessage());
                 }

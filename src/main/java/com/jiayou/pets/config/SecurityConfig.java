@@ -32,24 +32,26 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(List.of("*")); // 允许所有来源，与 CorsConfig 一致
-                    config.setAllowedMethods(List.of("*")); // 允许所有方法
-                    config.setAllowedHeaders(List.of("*")); // 允许所有请求头
-                    config.setAllowCredentials(false);      // 不允许携带 Cookie，与 CorsConfig 一致
-                    config.setMaxAge(3600L);                // 预检请求缓存时间 3600 秒
+                    String origin = request.getHeader("Origin");
+                    config.setAllowedOrigins(origin != null ? List.of(origin) : List.of("http://localhost:5173")); // 默认值防止 null
+                    config.setAllowedMethods(List.of("*"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true); // 支持凭证
+                    config.setMaxAge(3600L);
                     return config;
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/files/download/**").permitAll()
-//                        .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/index.html").permitAll()
                         .requestMatchers("/").permitAll()
-                        .requestMatchers("/app/**").permitAll()
+                        .requestMatchers("/app/**").permitAll() // STOMP 消息路径豁免，但 /pets/ws 需认证
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/assets/**").permitAll()
+                        // 明确不豁免 /pets/ws/**，确保经过 JWT 认证
+                        .requestMatchers("/pets/ws/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
