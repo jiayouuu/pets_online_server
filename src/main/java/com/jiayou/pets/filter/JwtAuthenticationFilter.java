@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null && !token.isEmpty() && jwtUtil.validateToken(token)) {
             Object email = jwtUtil.getClaimFromToken(token, "email");
-            Object userId = jwtUtil.getClaimFromToken(token, "userId");
+            Object id = jwtUtil.getClaimFromToken(token, "id");
             Object roles = jwtUtil.getClaimFromToken(token, "roles");
             List<GrantedAuthority> authorities = new ArrayList<>();
             if (roles instanceof List<?>) {
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authorities);
             auth.setDetails(new HashMap<String, Object>() {
                 {
-                    put("userId", userId);
+                    put("id", id);
                 }
             });
             SecurityContextHolder.getContext().setAuthentication(auth);

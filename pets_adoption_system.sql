@@ -8,9 +8,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- 创建数据库
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS pets_adoption_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS pets_online DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-USE pets_adoption_system;
+USE pets_online;
+
+DROP TABLE IF EXISTS `users`;
 
 -- ----------------------------
 -- 用户表
@@ -394,9 +396,9 @@ CREATE TABLE `system_config` (
 -- 初始化系统配置
 -- ----------------------------
 INSERT INTO `system_config` (`config_key`, `config_value`, `description`) VALUES
-('SITE_NAME', '宠物领养系统', '站点名称'),
+('SITE_NAME', '萌宠在线', '站点名称'),
 ('SITE_DESC', '为流浪动物提供一个温暖的家', '站点描述'),
-('ADMIN_EMAIL', 'admin@petadoption.com', '管理员邮箱'),
+('ADMIN_EMAIL', '3010336955@qq.com', '管理员邮箱'),
 ('EMAIL_VERIFICATION_EXPIRE', '24', '邮箱验证有效期(小时)'),
 ('ADOPTION_AUTO_CANCEL', '72', '领养申请自动取消时间(小时)'),
 ('SENSITIVE_WORD_ENABLE', 'true', '是否启用敏感词过滤'),

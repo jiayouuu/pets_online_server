@@ -40,6 +40,8 @@ public class UserServiceImpl implements UserService {
         }
         // 密码加密
         user.setPassword(Encrypt.hashPassword(user.getPassword()));
+        // 默认昵称为邮箱
+        user.setNickname(tokenEmail);
         // 保存新用户
         if (0 == userMapper.insert(user)) {
             return ResEntity.error(400, "注册失败");
@@ -59,7 +61,7 @@ public class UserServiceImpl implements UserService {
         }
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("email", request.getEmail());
-        claims.put("userId",existUser.getUserId());
+        claims.put("id",existUser.getId());
         claims.put("role", existUser.getRole());
         String token;
         if (request.isRemember()) {
