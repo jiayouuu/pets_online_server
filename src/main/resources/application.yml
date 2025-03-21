@@ -3,8 +3,8 @@ spring:
         name: pets_online_server
     datasource:
         url: jdbc:mysql://127.0.0.1:3306/pets_online?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&serverTimezone=UTC
-        username: root
-        password: 123456
+        username: pets_online
+        password: pets_online020726
         driver-class-name: com.mysql.cj.jdbc.Driver
     jpa:
         hibernate:

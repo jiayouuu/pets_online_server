@@ -33,7 +33,6 @@ public class FileServiceImpl implements FileService {
     private final Map<String, Long> lastUploadTimeMap = new ConcurrentHashMap<>();
     @Autowired
     private SimpMessagingTemplate messagingTemplate; // 注入 WebSocket 消息模板
-    @Autowired
     public FileServiceImpl(FileUploadConfig fileUploadConfig,SimpMessagingTemplate messagingTemplate) {
         this.fileUploadConfig = fileUploadConfig;
         this.messagingTemplate = messagingTemplate;

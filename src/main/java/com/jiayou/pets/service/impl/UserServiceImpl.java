@@ -57,17 +57,15 @@ public class UserServiceImpl implements UserService {
         if (!Encrypt.checkPassword(request.getPassword(), existUser.getPassword())) {
             return ResEntity.error(400, "密码错误");
         }
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("email", request.getEmail());
+        claims.put("userId",existUser.getUserId());
+        claims.put("role", existUser.getRole());
         String token;
         if (request.isRemember()) {
-            token = jwtUtil.generateToken(new HashMap<>(){{
-                put("email", request.getEmail());
-                put("userId",existUser.getUserId());
-            }}, 7, TimeUnit.DAYS);
+            token = jwtUtil.generateToken(claims, 7, TimeUnit.DAYS);
         } else {
-            token = jwtUtil.generateToken(new HashMap<>(){{
-                put("email", request.getEmail());
-                put("userId",existUser.getUserId());
-            }}, 6, TimeUnit.HOURS);
+            token = jwtUtil.generateToken(claims, 6, TimeUnit.HOURS);
         }
         map.put("token",token);
         return ResEntity.success(map);
